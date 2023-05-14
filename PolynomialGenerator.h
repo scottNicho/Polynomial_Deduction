@@ -19,10 +19,10 @@ public:
         }
     }
 
-    std::vector<T> generateOutputSet(const std::vector<T> &inputVector) {
+    std::vector<T> generateOutputSet() {
         std::vector<T> returnVector{};
-        for (auto xi : inputVector) {
-            returnVector.push_back(generatePolynomialNumber(xi));
+        for (int i = startValue; i <= endValue; i++) {
+            returnVector.push_back(generatePolynomialNumber(i));
         }
         return returnVector;
     }
@@ -64,10 +64,10 @@ public:
     }
     
     
-    void setCoefficientsRange(int c4,int c3,int c2, int c1,int c, int start,int end) {
-        orderFourCoefficient = c4; orderThreeCoefficient = c3;
-        orderTwoCoefficient = c2; orderOneCoefficient = c1;
-        constant = c; startValue = start; endValue = end;
+    void setCoefficientsRange(std::vector<T> newcoefficients, int start,int end) {
+        orderFourCoefficient = newcoefficients[0]; orderThreeCoefficient = newcoefficients[1];
+        orderTwoCoefficient = newcoefficients[2]; orderOneCoefficient = newcoefficients[3];
+        constant = newcoefficients[4]; startValue = start; endValue = end;
     }
     
 

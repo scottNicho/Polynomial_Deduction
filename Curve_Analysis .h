@@ -8,15 +8,23 @@
 
 class CurveAnalysis {
 public:
-	CurveAnalysis() :adjustedVector(startingSet){};
+	CurveAnalysis() :adjustedVector{startingSet}{};
 
-
+	void curveDeduction() {
+		while (!endOfDifferentiation) {
+			curveAnalyser();
+			updateAdjustedCurve();
+		}
+		findSetConstant();
+		curveGenerator.generateOutputSet();
+		printCurveCoefficients();
+	}
 
 	void curveAnalyser() {
 		CurveOrder = 0;
 		std::vector<int> runningVector = adjustedVector;
 		while (!uniformVectorCheck(runningVector)) {
-			runningVector = diffrenceBetweenTerms(runningVector);
+			runningVector = differenceBetweenTerms(runningVector);
 			CurveOrder += 1;
 		}
 		if (CurveOrder > 4) { std::cout << "curve order too high probable input error";}
@@ -24,7 +32,7 @@ public:
 			std::cout << xi << std::endl;
 		}
 		if (CurveOrder == 0) {
-			endOfDifferetiation = true;
+			endOfDifferentiation = true;
 			return;
 		}
 		std::cout << CurveOrder << std::endl;
@@ -36,7 +44,7 @@ public:
 	void updateCurveCoefficient() {
 		int count = 1;
 	    int index = 4 - CurveOrder;
-		mostRecentCoefficient = mostRecentCoefficient * (pow(-1.0, static_cast<double>(CurveOrder))); // set to the correct sign
+		mostRecentCoefficient *= (CurveOrder % 2 == 0) ? 1 : -1;; // set to the correct sign
 		double updateNum = static_cast<double>(mostRecentCoefficient);
 		while (count <= CurveOrder) {
 			updateNum = updateNum / count;
@@ -62,16 +70,23 @@ public:
 
 protected:
 
+	void findSetConstant() {
+		std::vector<double> tempVec = curveGenerator.generateOutputSet();
+		int constant = startingSet[0] - tempVec[0];
+		curveCoefficients[4] = constant;
+	}
+
 	void updateAdjustedCurve() {
 		adjustedVector.clear();
-		std::vector<double> tempVec = curveGenerator.generateOutputSet(curveCoefficients);
+		curveGenerator.setCoefficientsRange(curveCoefficients,0,10);
+		std::vector<double> tempVec = curveGenerator.generateOutputSet();
 		for (int xi = 0; xi < startingSet.size(); xi++) {
 			adjustedVector.push_back(startingSet[xi] - tempVec[xi]);// adjust the curve for the known values
 		}
 		return;
 	}
 
-	std::vector<int> diffrenceBetweenTerms(const std::vector<int>& inputVector) {
+	std::vector<int> differenceBetweenTerms(const std::vector<int>& inputVector) {
 		std::vector<int> returnVector{};
 		if (inputVector.empty()) { return returnVector; }
 		else
@@ -97,7 +112,7 @@ protected:
 		return false;
 	}
 
-	bool endOfDifferetiation = false;
+	bool endOfDifferentiation = false;
 	int mostRecentCoefficient = _MAX_INT_DIG;
 	unsigned int CurveOrder = 0;
 	std::vector<int> startingSet{ -3, 2,7,0,-31,-98,-213,-388,-635,-966,-1393};
