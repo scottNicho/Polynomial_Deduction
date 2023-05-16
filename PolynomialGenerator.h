@@ -27,6 +27,36 @@ public:
         return returnVector;
     }
 
+    void AskRunUsersPolynomial() {
+        char save;
+        char YesOrNo;
+        char happyNot;
+        while (true) {
+            std::cout << "would you like to enter a polynomial? \n please press y/Y for yes or n/N for no" << std::endl;
+            std::cin >> YesOrNo;
+            if (YesOrNo == 'y' || YesOrNo == 'Y') { break; }
+            else if (YesOrNo == 'n' || YesOrNo == 'N') { return; }
+            std::cout << " sorry I didn't get that"<<std::endl;
+        }
+        while (true) {
+            getUsersPolynomial();
+            setStartEndValues();
+            updateOutputSet();
+            std::cout << "this is the output from your polynomial and range " << std::endl;
+            printOutoutSet();
+            std::cout << "Are you happy with this polynomial and range? please press y/Y for yes or n/N if you wish to enter a new ploynomial" << std::endl;
+            std::cin >> happyNot;
+            if (happyNot == 'y' || happyNot == 'Y') { break; }
+        }
+        
+        std::cout << "Would you like to save this polynomial? Please press y/Y for yes or n/N for no" << std::endl;
+        std::cin >> save;
+        if (save == 'y' || save == 'Y') {
+            savePolynomialToFile();
+        }
+
+    }
+
     void getUsersPolynomial() {
         polyFile.setOrderfourPolynomial();
          std::vector<int> tempVector = polyFile.getUsersPolynomialCoefficients();
@@ -78,6 +108,13 @@ public:
     const std::string& getStringPolynomial() { return StringPolynomial; }
 
 protected:
+
+    void printOutoutSet() {
+        for (auto ht : outputSet) {
+            std::cout <<std::to_string(ht) + " ";
+        }
+        std::cout << "\n";
+    }
     
     void removeZeroTermsString() {
         size_t pos = 0;
@@ -110,7 +147,13 @@ protected:
         return coefficientPowerFour + coefficientPowerThree + coefficientPowerTwo + coefficientPowerOne + constant;
     }
 
-    void setStartEndValues(int newStart, int newEnd) {
+    void setStartEndValues() {
+        int newStart;
+        int newEnd;
+        std::cout << "what would you like the range to start from? "<<std::endl;
+        std::cin >> newStart;
+        std::cout << "And what would you like the range to end at? " << std::endl;
+        std::cin >> newEnd;
         startValue = newStart;
         endValue = newEnd;
     }

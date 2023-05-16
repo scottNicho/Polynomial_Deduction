@@ -11,17 +11,16 @@ int main() {
 	FileScholar monkey;
 	PolynomialGenerator<int> doggy;
 	CurveAnalysis bush;
-	std::vector<int> testVector{2,4,6,8,10,12,14,16};
+	std::vector<int> testVector{0,-2,6,1,0};
 	
-//	doggy.setCoefficientsRange(0, -2, 6, 1, -3, 0, 10);
-//doggy.updateOutputSet();
-//std::vector<int>temp = doggy.getOutputSet();
-//for (auto xi : temp) {
-//	std::cout << xi << std::endl;
-//}
 
-	bush.curveAnalyser();
-
+	doggy.AskRunUsersPolynomial();
+	//bush.curveDeduction();
+	/*doggy.setCoefficientsRange(testVector, 0, 10);
+	std::vector<int>temp = doggy.generateOutputSet();
+	for (auto xi : temp) {
+	std::cout << xi << std::endl;
+	}*/
 	return 0;
 }
 

@@ -120,5 +120,6 @@ protected:
 	//double curveCoefficients[5]{ 0 };
 	std::vector<double> curveCoefficients{0.0,0.0,0.0,0.0,0.0};
 	PolynomialGenerator <double> curveGenerator;
+	FileScholar curveReader;
 };
 
