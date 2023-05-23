@@ -11,18 +11,27 @@ public:
 	CurveAnalysis() :adjustedVector{startingSet}{};
 
 	void curveDeduction() {
+		coefficientSign = (startingSet[startingSet.size() - 1] >= 0) ? 1 : -1;
 		while (!endOfDifferentiation) {
 			curveAnalyser();
 			updateAdjustedCurve();
 		}
 		findSetConstant();
-		curveGenerator.generateOutputSet();
+		//curveGenerator.generateOutputSet();
 		printCurveCoefficients();
+		curveGenerator.setCoefficientsRange(curveCoefficients, 0, 10);
+		curveGenerator.setStringPolynomial();
+		while (true) {
+			std::cout << "This is the polynomial that generated the chosen set" << std::endl;
+			std::cout << curveGenerator.getStringPolynomial() << std::endl;
+			break;
+		}
 	}
 
 	void curveAnalyser() {
 		CurveOrder = 0;
 		std::vector<int> runningVector = adjustedVector;
+		coefficientSign = (adjustedVector[adjustedVector.size() - 1] >= 0) ? 1 : -1;
 		while (!uniformVectorCheck(runningVector)) {
 			runningVector = differenceBetweenTerms(runningVector);
 			CurveOrder += 1;
@@ -41,19 +50,59 @@ public:
 		printCurveCoefficients();
 	}
 
-	void updateCurveCoefficient() {
-		int count = 1;
-	    int index = 4 - CurveOrder;
-		mostRecentCoefficient *= (CurveOrder % 2 == 0) ? 1 : -1;; // set to the correct sign
-		double updateNum = static_cast<double>(mostRecentCoefficient);
-		while (count <= CurveOrder) {
-			updateNum = updateNum / count;
-			count += 1;
-		}
-		curveCoefficients[index] = updateNum;
-	}
-
 	
+
+	void DeducePolynomial() {
+		char userInput;
+		while (true) {
+			std::cout << "Hi please enter the letter of the output set you would like the polynomial for?" << std::endl;
+			std::cin >> userInput;
+			if (static_cast<int>(userInput) >= 65 && static_cast<int>(userInput) <= 70) {
+				break;
+			}
+			if (static_cast<int>(userInput) >= 97 && static_cast<int>(userInput) <= 102) {
+				userInput = userInput - 32;
+				break;
+			}
+			std::cout << "Sorry Please enter a character form A - F" << std::endl;
+		}
+		std::fstream polynomialFile;
+		polynomialFile.open("Polynomial_Outputs.txt", std::ios::in);
+		if (polynomialFile.is_open()) {
+			std::string line;
+			std::string outputSet; 
+			bool capture = false;
+			int count = 0;
+			while (std::getline(polynomialFile,line)) {
+				if (capture) {
+					if (count >= 2) { break; }
+					if (count == 0) { 
+						outputSet = line;
+						count++;
+						continue;
+					}
+					outputSet += line;
+					count++;
+				}
+				if (curveReader.findLetter(line, userInput)) {
+					curveReader.GetStartEnd(line);//gets the range
+					capture = true;
+					continue;
+				}
+			}
+			startingSet = curveReader.extractOutputSet(outputSet);
+			adjustedVector = startingSet;
+			if (curveReader.getStartEndRange().empty()) { startKnown = false; }
+			else
+			{
+				startKnown = true;
+				rangeStartpoint = curveReader.getStartEndRange()[0];
+				rangeEndPoint = curveReader.getStartEndRange()[1];
+			}
+		}
+		polynomialFile.close();
+		curveDeduction();
+	}
 
 	//test function
 	void printCurveCoefficients() {
@@ -62,6 +111,8 @@ public:
 		}
 		std::cout << std::endl;
 	}
+
+	std::vector<int> getStartingSet() { return startingSet; }
 	//test function 
 	
 //setters and getters 
@@ -69,6 +120,23 @@ public:
 	void setMostRecentCoefficient(int newCoefficient) { mostRecentCoefficient = newCoefficient; };
 
 protected:
+
+	void updateCurveCoefficient() {
+		int count = 1;
+		int index = 4 - CurveOrder;
+
+		//mostRecentCoefficient *= (CurveOrder % 2 == 0) ? 1 : -1; // set to the correct sign
+		if (coefficientSign < 0 && mostRecentCoefficient>0) { mostRecentCoefficient = -mostRecentCoefficient;}
+		else if (coefficientSign > 0 && mostRecentCoefficient<0) { mostRecentCoefficient = -mostRecentCoefficient;}
+
+		double updateNum = static_cast<double>(mostRecentCoefficient);
+		while (count <= CurveOrder) {
+			updateNum = updateNum / count;
+			count += 1;
+		}
+		if (curveCoefficients[index] != 0) { std::cout << "error index not 0!" << std::endl; }
+		curveCoefficients[index] = updateNum;
+	}
 
 	void findSetConstant() {
 		std::vector<double> tempVec = curveGenerator.generateOutputSet();
@@ -79,8 +147,9 @@ protected:
 	void updateAdjustedCurve() {
 		adjustedVector.clear();
 		curveGenerator.setCoefficientsRange(curveCoefficients,0,10);
+		curveGenerator.setStringPolynomial();
 		std::vector<double> tempVec = curveGenerator.generateOutputSet();
-		for (int xi = 0; xi < startingSet.size(); xi++) {
+		for (int xi = 0; xi < tempVec.size(); xi++) {
 			adjustedVector.push_back(startingSet[xi] - tempVec[xi]);// adjust the curve for the known values
 		}
 		return;
@@ -100,7 +169,7 @@ protected:
 
 	bool uniformVectorCheck(std::vector<int> inputVector) {
 		int firstElement = inputVector[0];
-		if (firstElement != 0) {
+		if (firstElement != 50) {
 			for (auto xi : inputVector) {
 				if (xi != firstElement) {
 					return false;
@@ -112,10 +181,13 @@ protected:
 		return false;
 	}
 
+	bool startKnown = false;
 	bool endOfDifferentiation = false;
+	int rangeStartpoint, rangeEndPoint;
+	int coefficientSign;
 	int mostRecentCoefficient = _MAX_INT_DIG;
 	unsigned int CurveOrder = 0;
-	std::vector<int> startingSet{ -3, 2,7,0,-31,-98,-213,-388,-635,-966,-1393};
+	std::vector<int> startingSet{};
 	std::vector<int> adjustedVector;
 	//double curveCoefficients[5]{ 0 };
 	std::vector<double> curveCoefficients{0.0,0.0,0.0,0.0,0.0};

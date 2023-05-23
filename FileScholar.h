@@ -75,6 +75,50 @@ public:
         }
     }
 
+    std::vector<int> extractOutputSet(std::string line) {
+        std::vector<int> returnVector = {};
+        int xi = 0;
+        bool inNumber = false;
+        while (xi < line.length()) {
+            if ((static_cast<int>(line[xi]) <= 57 && static_cast<int>(line[xi]) >= 48)|| line[xi] == '-') {
+                for (int j = xi+1; j < line.length(); j++) {
+                    if ((static_cast<int>(line[j]) > 57 || static_cast<int>(line[j]) < 48)|| j+1 == line.length()) {
+                        int number = std::stoi(line.substr(xi, j));
+                        returnVector.push_back(number);
+                        xi = j;
+                        break;
+                    }
+                }
+            }
+            xi++;
+        }
+
+        return returnVector;
+    }
+
+
+    bool findLetter(const std::string line,const char Letter) {
+        if (line[0] == Letter) { return true; }
+        return false;
+    }
+
+
+   void GetStartEnd(const std::string line) {
+       unsigned int xi = 0;
+       while (xi < line.length()) {
+           if (static_cast<int>(line[xi]) <= 57 && static_cast<int>(line[xi]) >= 48) {
+               for (int j = xi + 1; j < line.length(); j++) {
+                   if ((static_cast<int>(line[j]) > 57 || static_cast<int>(line[j]) < 48) || j + 1 == line.length()) {
+                       int number = std::stoi(line.substr(xi, j));
+                       startEndRange.push_back(number);
+                       xi = j;
+                       break;
+                   }
+               }
+          }
+           xi++;
+       }
+    }
 
     //setters and getters
 
@@ -86,6 +130,10 @@ public:
 
     const std::vector<int> &getUsersPolynomialCoefficients() {
         return usersPolynomialCoefficients;
+    }
+
+    const std::vector<int> getStartEndRange() {
+        return startEndRange;
     }
 
 protected:
@@ -100,5 +148,6 @@ protected:
     }
 
     std::vector<int> usersPolynomialCoefficients{};
+    std::vector<int> startEndRange{};
     //int UsersPolynomialCoefficients[5]{ 0 };
 };

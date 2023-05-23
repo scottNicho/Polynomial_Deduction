@@ -77,7 +77,7 @@ public:
         strPolynomial << "+(" << orderThreeCoefficient << ")X^3";
         strPolynomial << "+(" << orderTwoCoefficient << ")X^2";
         strPolynomial << "+(" << orderOneCoefficient << ")X";
-        strPolynomial << "+" << constant;
+        strPolynomial << "+" << "(" << constant << ")" ;
         StringPolynomial = strPolynomial.str();
         removeZeroTermsString();
     }
@@ -100,7 +100,7 @@ public:
         constant = newcoefficients[4]; startValue = start; endValue = end;
     }
     
-
+    
     int getStartValue() const { return startValue; }
     int getEndValue() const { return endValue; }
     void setOutputSet(const std::vector<T>& newOutputSet) { outputSet = newOutputSet; }
