@@ -11,7 +11,7 @@ public:
 	CurveAnalysis() :adjustedVector{startingSet}{};
 
 	void curveDeduction() {
-		coefficientSign = (startingSet[startingSet.size() - 1] >= 0) ? 1 : -1;
+		coefficientSign = (startingSet[startingSet.size() - 1] >= startingSet[startingSet.size() - 2]) ? 1 : -1;
 		while (!endOfDifferentiation) {
 			curveAnalyser();
 			updateAdjustedCurve();
@@ -21,17 +21,21 @@ public:
 		printCurveCoefficients();
 		curveGenerator.setCoefficientsRange(curveCoefficients, 0, 10);
 		curveGenerator.setStringPolynomial();
-		while (true) {
-			std::cout << "This is the polynomial that generated the chosen set" << std::endl;
-			std::cout << curveGenerator.getStringPolynomial() << std::endl;
-			break;
+		char userYN;
+		std::string derivedPolyString = curveGenerator.getStringPolynomial();
+		std::cout << "This is the polynomial that generated the chosen set" << std::endl;
+		std::cout << derivedPolyString << std::endl;
+		std::cout<< "would you like to save this result? \n please press y/Y for yes" << std::endl;
+		std::cin >> userYN;
+		if (userYN == 'y' || userYN == 'Y') {
+				curveReader.savePolynomialToFile(derivedPolyString);
 		}
 	}
 
 	void curveAnalyser() {
 		CurveOrder = 0;
 		std::vector<int> runningVector = adjustedVector;
-		coefficientSign = (adjustedVector[adjustedVector.size() - 1] >= 0) ? 1 : -1;
+		coefficientSign = (adjustedVector[adjustedVector.size() - 1] >= adjustedVector[adjustedVector.size() - 2]) ? 1 : -1;
 		while (!uniformVectorCheck(runningVector)) {
 			runningVector = differenceBetweenTerms(runningVector);
 			CurveOrder += 1;

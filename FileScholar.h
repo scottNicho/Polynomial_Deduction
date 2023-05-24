@@ -75,6 +75,16 @@ public:
         }
     }
 
+    void savePolynomialToFile(const std::string& polynomialStr) {
+        std::fstream polynomialFile;
+        polynomialFile.open("Polynomial_expression.txt", std::ios::app);
+        if (polynomialFile.is_open()) {
+            polynomialFile.seekg(0, std::ios::end);
+            polynomialFile << polynomialStr;
+            polynomialFile.close();
+        }
+    }
+
     std::vector<int> extractOutputSet(std::string line) {
         std::vector<int> returnVector = {};
         int xi = 0;

@@ -134,8 +134,8 @@ protected:
             StringPolynomial.erase(pos - 1, 5);
         }
         pos = 0;
-        while ((pos = StringPolynomial.find("0", pos)) != std::string::npos) {
-            StringPolynomial.erase(pos - 1, 2);
+        while ((pos = StringPolynomial.find("(0)", pos)) != std::string::npos) {
+            StringPolynomial.erase(pos - 1, 4);
         }
     }
 
