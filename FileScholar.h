@@ -80,7 +80,7 @@ public:
         polynomialFile.open("Polynomial_expression.txt", std::ios::app);
         if (polynomialFile.is_open()) {
             polynomialFile.seekg(0, std::ios::end);
-            polynomialFile << polynomialStr;
+            polynomialFile << polynomialStr + "\n\n";
             polynomialFile.close();
         }
     }
@@ -146,6 +146,20 @@ public:
         return startEndRange;
     }
 
+    void appendLettersToFile() {
+        int scrollingLetter = 65;
+        std::string fullFile = "";
+        std::fstream file("Polynomial_results.txt");
+        if (file.is_open()) {
+            std::string line;
+            while (std::getline(file, line)) {
+                fullFile.append(line);
+                fullFile.append("\n");
+            }
+        }
+        std::cout << " here is the file\n" << fullFile << std::endl;
+    }
+
 protected:
 
     bool conditionsKept(int powFour, int powThree, int powTwo, int powOne, int constant) {
@@ -156,6 +170,8 @@ protected:
         }
         return false;
     }
+
+    
 
     std::vector<int> usersPolynomialCoefficients{};
     std::vector<int> startEndRange{};

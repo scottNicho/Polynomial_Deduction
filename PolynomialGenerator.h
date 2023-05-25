@@ -57,6 +57,22 @@ public:
 
     }
 
+    void showUserSavedPolynomial() {
+        std::cout << "Hi would you like to load and see a saved polinomial? \n please press y/Y for yes" << std::endl;
+        char userInput;
+        std::cin >> userInput;
+        if (userInput == 'y' || userInput == 'Y') {
+            while (true) {
+                char userLetter;
+                std::cout << "please input the letter of the polynomial you would like to see" << std::endl;
+                std::cin >> userLetter;
+                //code to find letter and display line to user
+                std::cout << "Sorry I couldn't find a polynomial with that letter please try again" << std::endl;
+            }
+        }
+        
+    }
+
     void getUsersPolynomial() {
         polyFile.setOrderfourPolynomial();
          std::vector<int> tempVector = polyFile.getUsersPolynomialCoefficients();

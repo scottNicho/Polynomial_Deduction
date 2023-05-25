@@ -32,6 +32,26 @@ public:
 		}
 	}
 
+	void curveDeducerNoUserInput() {
+		coefficientSign = (startingSet[startingSet.size() - 1] >= startingSet[startingSet.size() - 2]) ? 1 : -1;
+		while (!endOfDifferentiation) {
+			curveAnalyser();
+			updateAdjustedCurve();
+		}
+		findSetConstant();
+		//curveGenerator.generateOutputSet();
+		printCurveCoefficients();
+		curveGenerator.setCoefficientsRange(curveCoefficients, 0, 10);
+		curveGenerator.setStringPolynomial();
+		std::string derivedPolyString = curveGenerator.getStringPolynomial();
+		curveReader.savePolynomialToFile(derivedPolyString);
+		startingSet.clear();
+		adjustedVector.clear();
+		startKnown = false;
+		rangeStartpoint = 0;
+		rangeEndPoint = 0;
+	}
+
 	void curveAnalyser() {
 		CurveOrder = 0;
 		std::vector<int> runningVector = adjustedVector;
@@ -105,7 +125,57 @@ public:
 			}
 		}
 		polynomialFile.close();
-		curveDeduction();
+		if (startKnown) {
+			curveDeduction();
+		}
+	}
+
+	void readAndSaveBatch() {
+		updateUserInputVec();
+		for (auto xi : userInputVec) {
+			char userInput = xi;
+			std::fstream polynomialFile;
+			polynomialFile.open("Polynomial_Outputs.txt", std::ios::in);
+			if (polynomialFile.is_open()) {
+				std::string line;
+				std::string outputSet;
+				bool capture = false;
+				int count = 0;
+				while (std::getline(polynomialFile, line)) {
+					if (capture) {
+						if (count >= 2) { break; }
+						if (count == 0) {
+							outputSet = line;
+							count++;
+							continue;
+						}
+						outputSet += line;
+						count++;
+					}
+					if (curveReader.findLetter(line, userInput)) {
+						curveReader.GetStartEnd(line);//gets the range
+						capture = true;
+						continue;
+					}
+				}
+				startingSet = curveReader.extractOutputSet(outputSet);
+				adjustedVector = startingSet;
+				if (curveReader.getStartEndRange().empty()) { startKnown = false; }
+				else
+				{
+					startKnown = true;
+					rangeStartpoint = curveReader.getStartEndRange()[0];
+					rangeEndPoint = curveReader.getStartEndRange()[1];
+				}
+			}
+			polynomialFile.close();
+			if (startKnown) {
+				endOfDifferentiation = false;
+				curveCoefficients = { 0,0,0,0,0 };
+				curveDeducerNoUserInput();
+			}
+		}
+		
 	}
 
 	//test function
@@ -124,6 +194,21 @@ public:
 	void setMostRecentCoefficient(int newCoefficient) { mostRecentCoefficient = newCoefficient; };
 
 protected:
+
+	void updateUserInputVec() {
+		std::fstream polynomialFile;
+		userInputVec.clear();//refill full vector
+		polynomialFile.open("Polynomial_Outputs.txt", std::ios::in);
+		if (polynomialFile.is_open()) {
+			std::string line;
+			while (std::getline(polynomialFile, line)) {
+				if (line[0] <= 'Z' && line[0] >= 'A') {
+					userInputVec.push_back(line[0]);
+				}
+			}
+			polynomialFile.close();
+		}
+	}
 
 	void updateCurveCoefficient() {
 		int count = 1;
@@ -193,6 +278,7 @@ protected:
 	unsigned int CurveOrder = 0;
 	std::vector<int> startingSet{};
 	std::vector<int> adjustedVector;
+	std::vector<char> userInputVec{};
 	//double curveCoefficients[5]{ 0 };
 	std::vector<double> curveCoefficients{0.0,0.0,0.0,0.0,0.0};
 	PolynomialGenerator <double> curveGenerator;
