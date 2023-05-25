@@ -21,14 +21,16 @@ public:
 		printCurveCoefficients();
 		curveGenerator.setCoefficientsRange(curveCoefficients, 0, 10);
 		curveGenerator.setStringPolynomial();
-		char userYN;
-		std::string derivedPolyString = curveGenerator.getStringPolynomial();
-		std::cout << "This is the polynomial that generated the chosen set" << std::endl;
-		std::cout << derivedPolyString << std::endl;
-		std::cout<< "would you like to save this result? \n please press y/Y for yes" << std::endl;
-		std::cin >> userYN;
-		if (userYN == 'y' || userYN == 'Y') {
+		if (checkExpressionConditions()) {
+			char userYN;
+			std::string derivedPolyString = curveGenerator.getStringPolynomial();
+			std::cout << "This is the polynomial that generated the chosen set" << std::endl;
+			std::cout << derivedPolyString << std::endl;
+			std::cout << "would you like to save this result? \n please press y/Y for yes" << std::endl;
+			std::cin >> userYN;
+			if (userYN == 'y' || userYN == 'Y') {
 				curveReader.savePolynomialToFile(derivedPolyString);
+			}
 		}
 	}
 
@@ -44,7 +46,9 @@ public:
 		curveGenerator.setCoefficientsRange(curveCoefficients, 0, 10);
 		curveGenerator.setStringPolynomial();
 		std::string derivedPolyString = curveGenerator.getStringPolynomial();
-		curveReader.savePolynomialToFile(derivedPolyString);
+		if (checkExpressionConditions()) {
+			curveReader.savePolynomialToFile(derivedPolyString);
+		}
 		startingSet.clear();
 		adjustedVector.clear();
 		startKnown = false;
@@ -194,6 +198,14 @@ public:
 	void setMostRecentCoefficient(int newCoefficient) { mostRecentCoefficient = newCoefficient; };
 
 protected:
+
+	bool checkExpressionConditions() {
+		if (curveCoefficients[4] > 1000 || curveCoefficients[4] < -1000) { return false; }
+		for (int i = 0; i < 4; i++) {
+			if (curveCoefficients[i] > 9 || curveCoefficients[i] < -9) { return false; }
+		}
+		return true;
+	}
 
 	void updateUserInputVec() {
 		std::fstream polynomialFile;
