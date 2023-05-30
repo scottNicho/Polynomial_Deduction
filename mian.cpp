@@ -9,21 +9,25 @@
 
 int main() {
 	FileScholar monkey;
-	PolynomialGenerator<int> doggy;
+	PolynomialGenerator<double> doggy;
 	CurveAnalysis bush;
-	std::vector<int> testVector{0,-2,6,1,0};
+	std::vector<double> testVector{0,-2,-7,-5,-1,10,12,10,8,6,4,2,0};
 	std::string testSet = { "12,34,6,778,2,13,11,28,29,72,90,113,207" };
 
-	/*monkey.appendLettersToFile();
-	doggy.AskRunUsersPolynomial();
-	bush.DeducePolynomial();
-	std::vector<int> output = bush.getStartingSet();
-	for (auto ll : output) {
-		std::cout << ll << std::endl;
-	}*/
-
-	bush.readAndSaveBatch();
 	
+	doggy.AskRunUsersPolynomial();
+	monkey.showUserFile();
+
+	char userInput;
+	std::cout <<"Would you like to read and derive all the polinomials in the output file then save them? \n please press y/Y for yes"<< std::endl;
+	std::cin >> userInput;
+	if (userInput == 'y' || userInput == 'Y') {
+		bush.readAndSaveBatch();
+	}
+	
+	
+
+
 	return 0;
 }
 
